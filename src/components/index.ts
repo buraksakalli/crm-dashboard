@@ -8,3 +8,4 @@ export * from './Providers';
 export * from './Modal';
 export * from './Image';
 export * from './Input';
+export * from './Loading';

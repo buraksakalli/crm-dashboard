@@ -13,12 +13,15 @@ export interface TableProps {
 export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
   const [search, setSearch] = useState('');
   const appContextDispatch = useContext(AppContextDispatcher);
+  const [selectedItems, setSelectedItems] = useState<Array<IUserData>>([]);
 
-  const handleClickByAction = (action: 'EDIT' | 'DELETE' | 'ADD', id: number) => {
-    const user = data.data.find((user: IUserData) => user.id === id);
+  const handleClickByAction = (action: 'EDIT' | 'DELETE' | 'ADD' | 'DELETE_ALL', id: number | Array<IUserData>) => {
+    if (!Array.isArray(id)) {
+      const user = data.data.find((user: IUserData) => user.id === id);
+      appContextDispatch({ type: AppContextActionTypeEnum.SET_SELECTED_USER_DATA, value: user });
+    } else appContextDispatch({ type: AppContextActionTypeEnum.SET_SELECTED_IDS, value: id });
 
     appContextDispatch({ type: AppContextActionTypeEnum.SET_ACTION_TYPE, value: action });
-    appContextDispatch({ type: AppContextActionTypeEnum.SET_USER_DATA, value: user });
     appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: true });
   };
 
@@ -76,14 +79,22 @@ export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-base-500">
           <tr>
-            <Checkbox />
+            <Checkbox onChange={e => (e.target.checked ? setSelectedItems(data.data) : setSelectedItems([]))} />
             <Head>Company</Head>
             <Head>Company</Head>
             <Head>Status</Head>
             <Head>About</Head>
             <Head>Users</Head>
             <Head>License Use</Head>
-            <Head>Action</Head>
+            <Head>
+              {selectedItems.length > 0 ? (
+                <Button variant="borderless" onClick={() => handleClickByAction('DELETE_ALL', selectedItems)}>
+                  <Icon name="TrashIcon" width={20} />
+                </Button>
+              ) : (
+                'Action'
+              )}
+            </Head>
           </tr>
         </thead>
         <tbody>
@@ -94,6 +105,8 @@ export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
                   key={item.id}
                   onEdit={() => handleClickByAction('EDIT', item.id)}
                   onRemove={() => handleClickByAction('DELETE', item.id)}
+                  selectedItems={selectedItems}
+                  setSelectedItems={setSelectedItems}
                 />
               ))
             : [...Array(10)].map((item: any, i: number) => (
@@ -144,10 +157,27 @@ const Pagination: React.FC<TableProps> = ({ data, onClick, loading }) => {
   );
 };
 
-const Row: React.FC<{ data: IUserData; onEdit: any; onRemove: any }> = ({ data, onEdit, onRemove }) => {
+interface IRowProps {
+  data: IUserData;
+  onEdit: any;
+  onRemove: any;
+  selectedItems: Array<IUserData>;
+  setSelectedItems: React.Dispatch<React.SetStateAction<IUserData[]>>;
+}
+
+const Row: React.FC<IRowProps> = ({ data, onEdit, onRemove, selectedItems, setSelectedItems }) => {
   return (
     <tr className="bg-white border-b hover:bg-gray-50">
-      <Checkbox />
+      <Checkbox
+        checked={selectedItems.findIndex(a => a.id === data.id) >= 0}
+        onChange={() => {
+          if (selectedItems.findIndex(a => a.id === data.id) >= 0) {
+            setSelectedItems(selectedItems.filter(a => a.id !== data.id));
+          } else {
+            setSelectedItems([...selectedItems, data]);
+          }
+        }}
+      />
       <Data>
         {
           <Link href={`/users/${data.id}`}>
@@ -196,16 +226,19 @@ const Data: React.FC<TableDataProps> = ({ ...props }) => {
   );
 };
 
-const Checkbox = () => {
+interface CheckboxPros extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+const Checkbox: React.FC<CheckboxPros> = ({ ...props }) => {
   return (
     <td className="p-4 w-4">
       <div className="flex items-center">
         <input
-          id="checkbox-table-search-1"
+          {...props}
+          id="table-checkbox"
           type="checkbox"
           className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 focus:ring-2  "
         />
-        <label htmlFor="checkbox-table-search-1" className="sr-only">
+        <label htmlFor="table-checkbox" className="sr-only">
           checkbox
         </label>
       </div>

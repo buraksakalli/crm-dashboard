@@ -20,7 +20,8 @@
       "@/containers": ["src/containers/index.ts"],
       "@/layouts": ["src/layouts/index.ts"],
       "@/api": ["src/api/index.ts"],
-      "@/contexts/*": ["src/contexts/*"]
+      "@/contexts/*": ["src/contexts/*"],
+      "@/hooks": ["src/hooks/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

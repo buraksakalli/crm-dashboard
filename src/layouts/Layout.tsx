@@ -7,17 +7,18 @@ import {
   initialAppState,
 } from '@/contexts/AppState.context';
 import { ModalSpecificView, Navbar } from '@/containers';
-import { Button, Icon } from '@/components';
+import { Button, Icon, Loading } from '@/components';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
+  const [loading, setLoading] = useState<boolean>(true);
   const appContextDispatch = useContext(AppContextDispatcher);
   const appContext = useContext(AppContext);
+
   const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (appContext.auth.isAuthenticated) setLoading(false);
@@ -26,7 +27,10 @@ export function Layout({ children }: LayoutProps) {
 
   const handleAddUser = () => {
     appContextDispatch({ type: AppContextActionTypeEnum.SET_ACTION_TYPE, value: 'ADD' });
-    appContextDispatch({ type: AppContextActionTypeEnum.SET_USER_DATA, value: initialAppState.userData });
+    appContextDispatch({
+      type: AppContextActionTypeEnum.SET_SELECTED_USER_DATA,
+      value: initialAppState.selectedUserData,
+    });
     appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: true });
   };
 
@@ -65,11 +69,7 @@ export function Layout({ children }: LayoutProps) {
         <ModalSpecificView />
       </section>
     );
-  return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      <Icon name="LoadingIcon" className="mr-2 w-8 h-8 animate-spin fill-primary" />
-    </div>
-  );
+  return <Loading />;
 }
 
 export default Layout;

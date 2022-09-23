@@ -18,10 +18,19 @@ const DeleteForm = () => {
   );
 };
 
+const DeleteAllUsers = () => {
+  return (
+    <Modal>
+      <Modal.DeleteAllUsers />
+    </Modal>
+  );
+};
+
 const ModalView = {
   EDIT: UserForm,
   ADD: UserForm,
   DELETE: DeleteForm,
+  DELETE_ALL: DeleteAllUsers,
 };
 
 export const ModalSpecificView = () => {

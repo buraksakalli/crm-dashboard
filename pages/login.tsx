@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { login } from '@/api';
 import { Button, Input, Providers } from '@/components';
 import { AppContext, AppContextActionTypeEnum, AppContextDispatcher } from '@/contexts/AppState.context';
+import { ILoginData } from './api/login';
 
 const Login = () => {
   const appContext = useContext(AppContext);
@@ -13,13 +14,22 @@ const Login = () => {
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
-    const res = await login({ email: e.currentTarget.email.value, password: e.currentTarget.password.value });
+    const res: ILoginData = await login({
+      email: e.currentTarget.email.value,
+      password: e.currentTarget.password.value,
+    });
 
     if (res.data.status) {
-      localStorage.setItem('token', 'random token');
+      localStorage.setItem('token', res.data.token);
+
       appContextDispatch({
         type: AppContextActionTypeEnum.SET_USER_TOKEN,
-        value: { token: 'random token', isAuthenticated: true },
+        value: { token: res.data.token, isAuthenticated: true },
+      });
+
+      appContextDispatch({
+        type: AppContextActionTypeEnum.SET_USER_DATA,
+        value: res.data.user,
       });
     }
   };
@@ -36,8 +46,10 @@ const Login = () => {
               placeholder="yourname@domain.com"
               required
               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+              type="email"
+              id="email"
             />
-            <Input label="Password" name="password" type="password" />
+            <Input label="Password" name="password" type="password" placeholder="•••••••••" id="password" />
             <Button variant="primary" type="submit" className="w-full flex justify-center font-medium">
               Login
             </Button>

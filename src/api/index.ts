@@ -1,3 +1,5 @@
+import { ILoginData } from 'pages/api/login';
+
 type getUserType = {
   activePage: number;
 };
@@ -30,18 +32,30 @@ export const updateUser = (user: any) => {
   }).then(res => res.json());
 };
 
-export const deleteUser = (id: number) => {
-  return fetch(`/api/users/${id}`, {
+export const deleteUser = (id: Array<number> | number) => {
+  const ids = Array.isArray(id) ? `ids=${id.join(',')}` : id;
+
+  return fetch(`/api/users/${ids}`, {
     method: 'DELETE',
   }).then(res => res.json());
 };
 
-export const login = (user: { email: string; password: string }) => {
+export const login = (user: { email: string; password: string }): ILoginData | any => {
   return fetch(`/api/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(user),
+  }).then(res => res.json());
+};
+
+export const auth = ({ token }: { token: string }) => {
+  return fetch(`/api/auth`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token }),
   }).then(res => res.json());
 };

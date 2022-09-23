@@ -47,19 +47,45 @@ export const Modal = ({ ...props }) => {
   );
 };
 
+export const DeleteAllUsers = () => {
+  const appContext = useContext(AppContext);
+  const appContextDispatch = useContext(AppContextDispatcher);
+
+  const handleDelete = async () => {
+    const users = appContext.selectedIds.map(user => user.id);
+    await deleteUser(users);
+
+    appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: false });
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="text-gray-500 text-center">Are you sure you want to delete the selected users?</p>
+      <div className="flex gap-2 items-center justify-center">
+        <Button variant="danger" onClick={handleDelete}>
+          Delete
+        </Button>
+        <Button onClick={() => appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: false })}>
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 export const DeleteUser = () => {
   const appContext = useContext(AppContext);
   const appContextDispatch = useContext(AppContextDispatcher);
 
   const handleDelete = async () => {
-    await deleteUser(appContext.userData.id);
+    await deleteUser(appContext.selectedUserData.id);
     appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: false });
   };
 
   return (
     <div className="flex flex-col gap-4">
       <p className="text-gray-500 text-center">
-        Are you sure you want to delete <span className="font-medium">{appContext.userData.first_name}</span>?
+        Are you sure you want to delete <span className="font-medium">{appContext.selectedUserData.first_name}</span>?
       </p>
       <div className="flex gap-2 items-center justify-center">
         <Button variant="danger" onClick={handleDelete}>
@@ -79,12 +105,12 @@ export const CreateUserForm = () => {
 
   const [formData, dispatch] = useReducer(
     (current: any, newValue: any) => ({ ...current, ...newValue }),
-    appContext.userData,
+    appContext.selectedUserData,
   );
 
   useEffect(() => {
-    dispatch(appContext.userData);
-  }, [appContext.userData]);
+    dispatch(appContext.selectedUserData);
+  }, [appContext.selectedUserData]);
 
   const { first_name, last_name, email } = formData;
 
@@ -99,7 +125,7 @@ export const CreateUserForm = () => {
 
     if (appContext.actionType === 'ADD') res = await createUser({ first_name, last_name, email });
     else if (appContext.actionType === 'EDIT')
-      res = await updateUser({ id: appContext.userData.id, first_name, last_name, email });
+      res = await updateUser({ id: appContext.selectedUserData.id, first_name, last_name, email });
 
     if (res.data.status === 'success') handleClose();
     else console.error('Error');
@@ -150,3 +176,4 @@ export const CreateUserForm = () => {
 
 Modal.UserForm = CreateUserForm;
 Modal.DeleteUser = DeleteUser;
+Modal.DeleteAllUsers = DeleteAllUsers;

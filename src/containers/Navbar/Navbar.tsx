@@ -1,7 +1,9 @@
+import { useContext } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Icon, IconNameType, Pill } from '@/components';
+import { AppContext } from '@/contexts/AppState.context';
 
 export const Navbar = () => {
   return (
@@ -43,19 +45,21 @@ export const Navbar = () => {
 };
 
 const Profile: React.FC<any> = () => {
+  const appContext = useContext(AppContext);
+
   return (
     <Link href="/profile">
       <div className="cursor-pointer mt-2 border rounded-lg border-tertiary p-3 flex items-center" tabIndex={0}>
         <Image
-          src={'https://thispersondoesnotexist.com/image'}
+          src={appContext?.userData?.avatar || '/images/avatar.png'}
           width={50}
           height={50}
           alt="profile photo"
           className="rounded-full"
         />
         <div className="flex w-full flex-col ml-3 text-sm text-inverted">
-          <span>Frankie Suvullian</span>
-          <span className="font-light">@frankie</span>
+          <span>{`${appContext?.userData?.first_name} ${appContext?.userData?.last_name}`}</span>
+          <span className="font-light">{`@${appContext?.userData?.first_name?.toLowerCase()}`}</span>
         </div>
       </div>
     </Link>
