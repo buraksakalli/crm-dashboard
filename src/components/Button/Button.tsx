@@ -1,3 +1,5 @@
+import classNames from 'classnames';
+
 type ButtonStyle = keyof typeof style;
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -13,12 +15,15 @@ const style = {
   danger: 'bg-red-500 border border-red-900 active:bg-red-900 hover:bg-red-600 text-base-500',
 };
 
-export const Button: React.FC<ButtonProps> = ({ ...props }) => {
+export const Button: React.FC<ButtonProps> = ({ className, ...props }) => {
   return (
     <button
-      className={`${props.className} ${
-        style[props.disabled ? 'disabled' : props.variant ?? 'default']
-      } group flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-300 active:scale-95 active:shadow-sm`}
+      className={classNames(
+        `${
+          style[props.disabled ? 'disabled' : props.variant ?? 'default']
+        } group flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-300 active:scale-95 active:shadow-sm`,
+        className,
+      )}
       {...props}
     >
       {props.children}

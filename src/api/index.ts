@@ -35,3 +35,13 @@ export const deleteUser = (id: number) => {
     method: 'DELETE',
   }).then(res => res.json());
 };
+
+export const login = (user: { email: string; password: string }) => {
+  return fetch(`/api/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user),
+  }).then(res => res.json());
+};
