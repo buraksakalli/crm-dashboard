@@ -203,13 +203,18 @@ const Row: React.FC<IRowProps> = ({ data, onEdit, onRemove, selectedItems, setSe
         </div>
       </Data>
       <Data>
-        <div className="flex">
+        <div className="flex items-center">
           <Button variant="borderless" onClick={() => onEdit(data.id)}>
             <Icon name="EditIcon" width={20} />
           </Button>
           <Button variant="borderless" onClick={() => onRemove(data.id)}>
             <Icon name="TrashIcon" width={20} />
           </Button>
+          <Link href={`/users/${data.id}`}>
+            <a>
+              <Icon name="Arrow" className="rotate-90" width={20} />
+            </a>
+          </Link>
         </div>
       </Data>
     </tr>

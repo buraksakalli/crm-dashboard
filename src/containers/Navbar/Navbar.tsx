@@ -1,45 +1,64 @@
-import { useContext } from 'react';
+import { useContext, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Icon, IconNameType, Pill } from '@/components';
+import { Button, Icon, IconNameType, Pill } from '@/components';
 import { AppContext } from '@/contexts/AppState.context';
 
 export const Navbar = () => {
+  const [show, setShow] = useState<boolean>(false);
+  const ref = useRef() as React.MutableRefObject<HTMLDivElement>;
+
   return (
     <aside className="top-0 md:col-span-2 p-2 md:border-r border-tertiary md:h-screen md:sticky">
-      <Navbar.Header icon="Logo">Untitled UI</Navbar.Header>
-      <Navbar.List>
-        <Navbar.Item href="/" icon={'HomeIcon'}>
-          Home
-        </Navbar.Item>
-        <Navbar.Item href="/users" icon={'DashboardIcon'}>
-          Dashboard
-        </Navbar.Item>
-        <Navbar.Item href="#" icon={'ProjectsIcon'}>
-          Projects
-        </Navbar.Item>
-        <Navbar.Item href="#" icon="TasksIcon">
-          Tasks
-          <Pill value={10} />
-        </Navbar.Item>
-        <Navbar.Item href="#" icon="ReportIcon">
-          Reporting
-        </Navbar.Item>
-        <Navbar.Item href="/profile" icon="UserIcon">
-          Profile
-        </Navbar.Item>
-      </Navbar.List>
+      <div className="flex justify-between">
+        <Navbar.Header icon="Logo">Untitled UI</Navbar.Header>
+        <Button
+          className="inline-flex items-center p-2 ml-3 rounded-lg md:hidden"
+          onClick={() => setShow(prev => !prev)}
+        >
+          <Icon name="MenuIcon" />
+        </Button>
+      </div>
 
-      <Navbar.List className="md:absolute md:bottom-2 w-11/12">
-        <Navbar.Item icon={'HomeIcon'}>
-          Notitications
-          <Pill value={4} />
-        </Navbar.Item>
-        <Navbar.Item icon={'DashboardIcon'}>Support</Navbar.Item>
-        <Navbar.Item icon={'ProjectsIcon'}>Settings</Navbar.Item>
-        <Navbar.Profile />
-      </Navbar.List>
+      <div
+        className={`${
+          show ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'
+        } transition-all duration-500 md:opacity-100 md:h-auto`}
+        ref={ref}
+      >
+        <Navbar.List>
+          <Navbar.Item href="/" icon={'HomeIcon'}>
+            Home
+          </Navbar.Item>
+          <Navbar.Item href="/users" icon={'DashboardIcon'}>
+            Dashboard
+          </Navbar.Item>
+          <Navbar.Item href="#" icon={'ProjectsIcon'}>
+            Projects
+          </Navbar.Item>
+          <Navbar.Item href="#" icon="TasksIcon">
+            Tasks
+            <Pill value={10} />
+          </Navbar.Item>
+          <Navbar.Item href="#" icon="ReportIcon">
+            Reporting
+          </Navbar.Item>
+          <Navbar.Item href="/profile" icon="UserIcon">
+            Profile
+          </Navbar.Item>
+        </Navbar.List>
+
+        <Navbar.List className="md:absolute md:bottom-2 w-11/12">
+          <Navbar.Item icon={'HomeIcon'}>
+            Notitications
+            <Pill value={4} />
+          </Navbar.Item>
+          <Navbar.Item icon={'DashboardIcon'}>Support</Navbar.Item>
+          <Navbar.Item icon={'ProjectsIcon'}>Settings</Navbar.Item>
+          <Navbar.Profile />
+        </Navbar.List>
+      </div>
     </aside>
   );
 };
