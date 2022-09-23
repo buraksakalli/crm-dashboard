@@ -48,6 +48,7 @@ export const AppContext = createContext<IAppState>(initialAppState);
 export const AppContextDispatcher = createContext<React.Dispatch<IAppContextAction>>(() => {});
 
 export const AppContextProvider = (props: any) => {
+  // @ts-ignore
   const [state, dispatch] = useReducer(reducer, initialAppState);
   return (
     <AppContext.Provider value={state}>

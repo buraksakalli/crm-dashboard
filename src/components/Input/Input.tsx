@@ -6,6 +6,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input: React.FC<InputProps> = ({ ...props }) => {
+  // @ts-ignore
   const error = props.pattern && props.value && !new RegExp(props.pattern).test(props?.value ?? '');
   return (
     <div className="mb-2">
