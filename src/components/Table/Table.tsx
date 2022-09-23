@@ -11,6 +11,7 @@ export interface TableProps {
 }
 
 export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
+  const [search, setSearch] = useState('');
   const appContextDispatch = useContext(AppContextDispatcher);
 
   const handleClickByAction = (action: 'EDIT' | 'DELETE' | 'ADD', id: number) => {
@@ -20,24 +21,6 @@ export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
     appContextDispatch({ type: AppContextActionTypeEnum.SET_USER_DATA, value: user });
     appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: true });
   };
-
-  const handleEditClick = (id: number) => {
-    const user = data.data.find((user: IUserData) => user.id === id);
-
-    appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: true });
-    appContextDispatch({ type: AppContextActionTypeEnum.SET_USER_DATA, value: user });
-    appContextDispatch({ type: AppContextActionTypeEnum.SET_ACTION_TYPE, value: 'EDIT' });
-  };
-
-  const handleDeleteClick = (id: number) => {
-    const user = data.data.find((user: IUserData) => user.id === id);
-
-    appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: true });
-    appContextDispatch({ type: AppContextActionTypeEnum.SET_USER_DATA, value: user });
-    appContextDispatch({ type: AppContextActionTypeEnum.SET_ACTION_TYPE, value: 'DELETE' });
-  };
-
-  const [search, setSearch] = useState('');
 
   const debounce = (func: any) => {
     let timer: any;
