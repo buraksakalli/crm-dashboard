@@ -1,8 +1,8 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { IUserData, UserProps } from 'pages/api/users/user.types';
-import { Button, Icon, Image } from '@/components';
 import { AppContextActionTypeEnum, AppContextDispatcher } from '@/contexts/AppState.context';
+import { Button, Icon, Image } from '@/components';
 
 export interface TableProps {
   data: UserProps;
@@ -11,9 +11,13 @@ export interface TableProps {
 }
 
 export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
-  const [search, setSearch] = useState('');
   const appContextDispatch = useContext(AppContextDispatcher);
   const [selectedItems, setSelectedItems] = useState<Array<IUserData>>([]);
+  const [filteredData, setFilteredData] = useState<UserProps>(data);
+
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
 
   const handleClickByAction = (action: 'EDIT' | 'DELETE' | 'ADD' | 'DELETE_ALL', id: number | Array<IUserData>) => {
     if (!Array.isArray(id)) {
@@ -37,10 +41,15 @@ export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
     };
   };
 
-  const optimizedFn = useCallback(debounce(onKeyUpHandler), []);
+  const optimizedFn = useCallback(debounce(onKeyUpHandler), [data]);
 
-  function onKeyUpHandler(e: any) {
-    setSearch(e.target.value.toLowerCase());
+  function onKeyUpHandler(e: React.ChangeEvent<HTMLInputElement>) {
+    const search = e.target.value;
+
+    const filteredData = data?.data.filter((user: IUserData) => {
+      return user.first_name.toLowerCase().includes(search) || user.last_name.toLowerCase().includes(search);
+    });
+    if (filteredData) setFilteredData({ ...data, data: filteredData });
   }
 
   return (
@@ -99,7 +108,7 @@ export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
         </thead>
         <tbody>
           {!loading
-            ? data?.data.map((item: IUserData) => (
+            ? filteredData?.data.map((item: IUserData) => (
                 <Row
                   data={item}
                   key={item.id}
@@ -124,7 +133,7 @@ export const Table: React.FC<TableProps> = ({ data, onClick, loading }) => {
               ))}
         </tbody>
       </table>
-      <Pagination loading={loading} data={data} onClick={page => onClick(page)} />
+      <Pagination loading={loading} data={filteredData} onClick={page => onClick(page)} />
     </div>
   );
 };

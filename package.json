@@ -16,7 +16,8 @@
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-iskelet": "^1.0.10"
+    "react-iskelet": "^1.0.10",
+    "react-toastify": "^9.0.8"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.5.0",

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useReducer } from 'react';
+import { toast } from 'react-toastify';
 import { createUser, deleteUser, updateUser } from '@/api';
 import { AppContext, AppContextActionTypeEnum, AppContextDispatcher } from '@/contexts/AppState.context';
 import { Button, Input, Icon } from '@/components';
@@ -80,6 +81,7 @@ export const DeleteUser = () => {
   const handleDelete = async () => {
     await deleteUser(appContext.selectedUserData.id);
     appContextDispatch({ type: AppContextActionTypeEnum.SET_SHOW_MODAL, value: false });
+    toast.success('User deleted successfully');
   };
 
   return (
@@ -123,9 +125,13 @@ export const CreateUserForm = () => {
     e.preventDefault();
     let res;
 
-    if (appContext.actionType === 'ADD') res = await createUser({ first_name, last_name, email });
-    else if (appContext.actionType === 'EDIT')
+    if (appContext.actionType === 'ADD') {
+      res = await createUser({ first_name, last_name, email });
+      if (res) toast.success('User created successfully');
+    } else if (appContext.actionType === 'EDIT') {
       res = await updateUser({ id: appContext.selectedUserData.id, first_name, last_name, email });
+      if (res) toast.success('User updated successfully');
+    }
 
     if (res.data.status === 'success') handleClose();
     else console.error('Error');
@@ -159,7 +165,7 @@ export const CreateUserForm = () => {
           label="E-mail Address"
           name="email"
           onChange={handleOnChange}
-          value={email}
+          value={email.toLowerCase()}
           required
           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
         />

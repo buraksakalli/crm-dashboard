@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import { login } from '@/api';
-import { Button, Input, Providers } from '@/components';
-import { AppContext, AppContextActionTypeEnum, AppContextDispatcher } from '@/contexts/AppState.context';
 import { ILoginData } from './api/login';
+import { AppContext, AppContextActionTypeEnum, AppContextDispatcher } from '@/contexts/AppState.context';
+import { Button, Input, Providers } from '@/components';
 
 const Login = () => {
   const appContext = useContext(AppContext);
@@ -48,8 +48,16 @@ const Login = () => {
               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
               type="email"
               id="email"
+              defaultValue={'test@test.com'}
             />
-            <Input label="Password" name="password" type="password" placeholder="•••••••••" id="password" />
+            <Input
+              label="Password"
+              name="password"
+              type="password"
+              placeholder="•••••••••"
+              id="password"
+              defaultValue={'randompassword'}
+            />
             <Button variant="primary" type="submit" className="w-full flex justify-center font-medium">
               Login
             </Button>
